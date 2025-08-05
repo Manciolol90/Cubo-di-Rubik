@@ -1,0 +1,63 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    background-color: #777;
+}
+
+h1{
+    color: brown;
+    background-color: aliceblue;
+}
+
+button{
+    width: 80px;
+    margin-top: 20px;
+}
+
+.contenitore{
+    display: flex;
+}
+
+.faccia{
+    display: flex;
+    margin: 3px;
+}
+.colonna{
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.pixel{
+    width: 85px;
+    height: 85px;
+    border: 2px solid black;
+}
+
+.bianco{
+    background-color: antiquewhite;
+}
+
+.arancione{
+    background-color: orange;
+}
+
+.rosso{
+    background-color: red;
+}
+
+.blu{
+    background-color: blue;
+}
+
+.verde{
+    background-color: green;
+}
+
+.giallo{
+    background-color: yellow;
+}

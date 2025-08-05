@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cubo di Rubik con Mancio</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Risolvi il cubo con Mancio!</h1>
+    <p></p>
+
+    <div class="contenitore">
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel blu">angolo blu rosso bianco</div>
+                <div class="pixel blu">spigolo rosso blu</div>
+                <div class="pixel blu">angolo blu rosso giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel blu">spigolo blu bianco</div>
+                <div class="pixel blu">Left (L)</div>
+                <div class="pixel blu">Spigolo blu giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel blu">angolo blu bianco arancione</div>
+                <div class="pixel blu">spigolo blu arancione</div>
+                <div class="pixel blu">angolo blu giallo arancione</div>
+            </div>
+        </div>
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel bianco">angolo bianco rosso blu</div>
+                <div class="pixel bianco">spigolo bianco blu</div>
+                <div class="pixel bianco">angolo bianco blu arancione</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel bianco">spigolo bianco rosso</div>
+                <div class="pixel bianco">Up (U)</div>
+                <div class="pixel bianco"> spigolo bianco arancione</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel bianco">angolo bianco verde rosso</div>
+                <div class="pixel bianco">spigolo bianco verde</div>
+                <div class="pixel bianco">angolo bianco verde arancione</div>
+            </div>
+        </div>
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel arancione">angolo arancione blu bianco</div>
+                <div class="pixel arancione">spigolo arancione blu</div>
+                <div class="pixel arancione">angolo arancione blu giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel arancione">spigolo arancione bianco</div>
+                <div class="pixel arancione">Front (F)</div>
+                <div class="pixel arancione">spigolo arancione giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel arancione">angolo arancione bianco verde</div>
+                <div class="pixel arancione">spigolo arancione verde</div>
+                <div class="pixel arancione">angolo arancione verde giallo</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contenitore">
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel verde">angolo verde bianco arancione</div>
+                <div class="pixel verde">spigolo verde arancione</div>
+                <div class="pixel verde">angolo verde arancione giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel verde">spigolo verde bianco</div>
+                <div class="pixel verde">Right (R)</div>
+                <div class="pixel verde">spigolo verde giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel verde">angolo verde bianco rosso</div>
+                <div class="pixel verde">spigolo verde rosso</div>
+                <div class="pixel verde">angolo verde rosso giallo</div>
+            </div>
+        </div>
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel giallo">angolo giallo arancione blu</div>
+                <div class="pixel giallo">spigolo giallo blu</div>
+                <div class="pixel giallo">spigolo giallo blu rosso</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel giallo">spigolo giallo arancione</div>
+                <div class="pixel giallo">Bottom (Bt)</div>
+                <div class="pixel giallo">spigolo giallo rosso</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel giallo">angolo giallo arancione verde</div>
+                <div class="pixel giallo">spigolo giallo verde</div>
+                <div class="pixel giallo">angolo giallo rosso verde</div>
+            </div>
+        </div>
+        <div  class="faccia">
+            <div class="colonna">
+                <div class="pixel rosso">angolo rosso bianco verde</div>
+                <div class="pixel rosso">spigolo rosso verde</div>
+                <div class="pixel rosso">angolo rosso giallo verde</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel rosso">spigolo rosso bianco</div>
+                <div class="pixel rosso">Back (B)</div>
+                <div class="pixel rosso">spigolo rosso giallo</div>
+            </div>
+            <div class="colonna">
+                <div class="pixel rosso">angolo rosso bianco blu</div>
+                <div class="pixel rosso">spigolo rosso blu</div>
+                <div class="pixel rosso">angolo rosso blu giallo</div>
+            </div>
+        </div>
+    </div>
+    <p>Ogni click fa muovere la faccia clickata in senso orario di 90°</p>
+    <div class="menu">
+        <button id="genera">Genera</button>
+        <button id="mosse">Mosse</button>
+        <button id="risolvi">Risolvi</button>
+        <button id="U">U</button>
+        <button id="F">F</button>
+        <button id="R">R</button>
+        <button id="Bt">Bt</button>
+        <button id="B">B</button>
+        <button id="L">L</button>
+    </div>
+    <div id="mosse">Lista mosse:</div>
+</body>
+</html>
