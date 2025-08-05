@@ -1,6 +1,74 @@
 // Seleziona tutti i bottoni
 var buttons = document.querySelectorAll("button");
 var colonne = document.querySelectorAll(".colonna");
+const rotazioni = {
+    F: {
+        adiacenti: [
+            [5,2], [2,0], [12,0], [9,2],
+            [4,2], [2,1], [13,0], [9,1],
+            [3,2], [2,2], [14,0], [9,0]
+        ],
+        faccia: [
+            [7,0], [6,1], [7,2], [8,1],
+            [8,0], [6,0], [6,2], [8,2]
+        ]
+    },
+    U: {
+        adiacenti: [
+            [15,0], [0,0], [6,0], [9,0],
+            [16,0], [1,0], [7,0], [10,0],
+            [17,0], [2,0], [8,0], [11,0]
+        ],
+        faccia: [
+            [4,0], [3,1], [4,2], [5,1],
+            [5,0], [3,0], [3,2], [5,2]
+        ]
+    },
+    R: {
+        adiacenti: [
+            [5,0], [8,0], [14,0], [15,2],
+            [5,1], [8,1], [14,1], [15,1],
+            [5,2], [8,2], [14,2], [15,0]
+        ],
+        faccia: [
+            [10,0], [9,1], [10,2], [11,1],
+            [11,0], [9,0], [9,2], [11,2]
+        ]
+    },
+    L: {
+        adiacenti: [
+            [3,2], [17,0], [12,2], [6,2],
+            [3,1], [17,1], [12,1], [6,1],
+            [3,0], [17,2], [12,0], [6,0]
+        ],
+        faccia: [
+            [1,0], [0,1], [1,2], [2,1],
+            [2,0], [0,0], [0,2], [2,2]
+        ]
+    },
+    B: {
+        adiacenti: [
+            [3,0], [11,0], [14,2], [0,2],
+            [4,0], [11,1], [13,2], [0,1],
+            [5,0], [11,2], [12,2], [0,0]
+        ],
+        faccia: [
+            [16,0], [15,1], [16,2], [17,1],
+            [17,0], [15,0], [15,2], [17,2]
+        ]
+    },
+    Bt: {
+        adiacenti: [
+            [8,2], [2,2], [17,2], [11,2],
+            [7,2], [1,2], [16,2], [10,2],
+            [6,2], [0,2], [15,2], [9,2]
+        ],
+        faccia: [
+            [13,0], [12,1], [13,2], [14,1],
+            [14,0], [12,0], [12,2], [14,2]
+        ]
+    }
+};
 
 for (var i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", esegui_click);
@@ -57,70 +125,23 @@ function esegui_click(event) {
 
 //funzione per gestire la rotazione in senso orario delle facce al click
 
-function ruotaFaccia(id){
-    switch (id) {
-        case "F":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[5].children[2], colonne[2].children[0], colonne[12].children[0], colonne[9].children[2])
-            scambio_pixel(colonne[4].children[2], colonne[2].children[1], colonne[13].children[0], colonne[9].children[1])
-            scambio_pixel(colonne[3].children[2], colonne[2].children[2], colonne[14].children[0], colonne[9].children[0])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[7].children[0], colonne[6].children[1], colonne[7].children[2], colonne[8].children[1])
-            scambio_pixel(colonne[8].children[0], colonne[6].children[0], colonne[6].children[2], colonne[8].children[2])
-            break;
+function ruotaFaccia(id) {
+    const config = rotazioni[id];
+    if (!config) return;
 
-        case "U":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[15].children[0], colonne[0].children[0], colonne[6].children[0], colonne[9].children[0])
-            scambio_pixel(colonne[16].children[0], colonne[1].children[0], colonne[7].children[0], colonne[10].children[0])
-            scambio_pixel(colonne[17].children[0], colonne[2].children[0], colonne[8].children[0], colonne[11].children[0])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[4].children[0], colonne[3].children[1], colonne[4].children[2], colonne[5].children[1])
-            scambio_pixel(colonne[5].children[0], colonne[3].children[0], colonne[3].children[2], colonne[5].children[2])
-            break;
-
-        case "R":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[5].children[0], colonne[8].children[0], colonne[14].children[0], colonne[15].children[2])
-            scambio_pixel(colonne[5].children[1], colonne[8].children[1], colonne[14].children[1], colonne[15].children[1])
-            scambio_pixel(colonne[5].children[2], colonne[8].children[2], colonne[14].children[2], colonne[15].children[0])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[10].children[0], colonne[9].children[1], colonne[10].children[2], colonne[11].children[1])
-            scambio_pixel(colonne[11].children[0], colonne[9].children[0], colonne[9].children[2], colonne[11].children[2])
-            break;
-
-        case "L":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[3].children[2], colonne[17].children[0], colonne[12].children[2], colonne[6].children[2])
-            scambio_pixel(colonne[3].children[1], colonne[17].children[1], colonne[12].children[1], colonne[6].children[1])
-            scambio_pixel(colonne[3].children[0], colonne[17].children[2], colonne[12].children[0], colonne[6].children[0])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[1].children[0], colonne[0].children[1], colonne[1].children[2], colonne[2].children[1])
-            scambio_pixel(colonne[2].children[0], colonne[0].children[0], colonne[0].children[2], colonne[2].children[2])
-            break;
-
-        case "B":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[3].children[0], colonne[11].children[0], colonne[14].children[2], colonne[0].children[2])
-            scambio_pixel(colonne[4].children[0], colonne[11].children[1], colonne[13].children[2], colonne[0].children[1])
-            scambio_pixel(colonne[5].children[0], colonne[11].children[2], colonne[12].children[2], colonne[0].children[0])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[16].children[0], colonne[15].children[1], colonne[16].children[2], colonne[17].children[1])
-            scambio_pixel(colonne[17].children[0], colonne[15].children[0], colonne[15].children[2], colonne[17].children[2])
-            break;
-
-        case "Bt":
-            //gestione mosse facce adiacenti
-            scambio_pixel(colonne[8].children[2], colonne[2].children[2], colonne[17].children[2], colonne[11].children[2])
-            scambio_pixel(colonne[7].children[2], colonne[1].children[2], colonne[16].children[2], colonne[10].children[2])
-            scambio_pixel(colonne[6].children[2], colonne[0].children[2], colonne[15].children[2], colonne[9].children[2])
-            //gestione mosse faccia ruotata
-            scambio_pixel(colonne[13].children[0], colonne[12].children[1], colonne[13].children[2], colonne[14].children[1])
-            scambio_pixel(colonne[14].children[0], colonne[12].children[0], colonne[12].children[2], colonne[14].children[2])
-            break;
-
+    // Rotazione delle facce adiacenti (3 cicli da 4)
+    for (let i = 0; i < config.adiacenti.length; i += 4) {
+        const [a, b, c, d] = config.adiacenti.slice(i, i + 4)
+            .map(([col, child]) => colonne[col].children[child]);
+        scambio_pixel(a, b, c, d);
     }
 
+    // Rotazione interna della faccia
+    for (let i = 0; i < config.faccia.length; i += 4) {
+        const [a, b, c, d] = config.faccia.slice(i, i + 4)
+            .map(([col, child]) => colonne[col].children[child]);
+        scambio_pixel(a, b, c, d);
+    }
 }
 
 //funzione per gestire lo scambio del colore dei quadratini
