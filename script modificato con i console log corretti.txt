@@ -1,0 +1,278 @@
+console.log(
+  "questo metodo segue la logica della soluzione a strati. è molto lontano dall'essere ottimizzato, ma è un inizio. Si parte dalla faccia bianca, eventualmente si può ampliare a tutte le facce."
+);
+
+// Seleziona tutti i bottoni
+var buttons = document.querySelectorAll("button");
+
+for (var i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener("click", esegui_click);
+}
+
+/*-----MAPPATURA FACCE, SPIGOLI E ANGOLI-----*/
+
+const indice_faccia = { L: 0, U: 1, F: 2, R: 3, D: 4, B: 5 };
+const faccia_by_indice = { 0: "L", 1: "U", 2: "F", 3: "R", 4: "D", 5: "B" }; // per i doppi giri di inserimento
+const colore_by_indice = {
+  0: "blu",
+  1: "bianco",
+  2: "arancione",
+  3: "verde",
+  4: "giallo",
+  5: "rosso",
+};
+// === Mappa dei 12 spigoli (coppie di sticker) ===
+// Formato: ["Nome", [face,col,row], [face,col,row]]
+const spigoli = [
+  ["UF", [indice_faccia.U, 1, 2], [indice_faccia.F, 1, 0]],
+  ["UR", [indice_faccia.U, 2, 1], [indice_faccia.R, 1, 0]],
+  ["UB", [indice_faccia.U, 1, 0], [indice_faccia.B, 1, 0]],
+  ["UL", [indice_faccia.U, 0, 1], [indice_faccia.L, 1, 0]],
+
+  ["DF", [indice_faccia.D, 1, 0], [indice_faccia.F, 1, 2]],
+  ["DR", [indice_faccia.D, 2, 1], [indice_faccia.R, 1, 2]],
+  ["DB", [indice_faccia.D, 1, 2], [indice_faccia.B, 1, 2]],
+  ["DL", [indice_faccia.D, 0, 1], [indice_faccia.L, 1, 2]],
+
+  ["FL", [indice_faccia.F, 0, 1], [indice_faccia.L, 2, 1]],
+  ["FR", [indice_faccia.F, 2, 1], [indice_faccia.R, 0, 1]],
+  ["BR", [indice_faccia.B, 0, 1], [indice_faccia.R, 2, 1]],
+  ["BL", [indice_faccia.B, 2, 1], [indice_faccia.L, 0, 1]],
+];
+
+console.log("Mappa degli spigoli:");
+for (let i = 0; i < spigoli.length; i++) {
+  console.log(
+    "Spigolo",
+    spigoli[i][0],
+    "Composto da facce di colore: ",
+    colore_by_indice[spigoli[i][1][0]],
+    " e ",
+    colore_by_indice[spigoli[i][2][0]],
+    "e aventi il ",
+    colore_by_indice[spigoli[i][1][0]],
+    "coordinate: ",
+    spigoli[i][1][1] + 3 * spigoli[i][1][0],
+    "/",
+    spigoli[i][1][2],
+    " e il ",
+    colore_by_indice[spigoli[i][2][0]],
+    "coordinate: ",
+    spigoli[i][2][1] + 3 * spigoli[i][2][0],
+    "/",
+    spigoli[i][2][2]
+  );
+}
+// === Mappa degli angoli (triple di sticker) ===
+// Formato:["Nome", [face,col,row], [face,col,row], [face,col,row]]
+
+const angoli = [
+  [
+    "ULF",
+    [indice_faccia.U, 0, 2],
+    [indice_faccia.L, 2, 0],
+    [indice_faccia.F, 0, 0],
+  ],
+  [
+    "URF",
+    [indice_faccia.U, 2, 2],
+    [indice_faccia.R, 0, 0],
+    [indice_faccia.F, 2, 0],
+  ],
+  [
+    "URB",
+    [indice_faccia.U, 2, 0],
+    [indice_faccia.R, 2, 0],
+    [indice_faccia.B, 0, 0],
+  ],
+  [
+    "ULB",
+    [indice_faccia.U, 0, 0],
+    [indice_faccia.L, 0, 0],
+    [indice_faccia.B, 2, 0],
+  ],
+
+  [
+    "DLF",
+    [indice_faccia.D, 0, 0],
+    [indice_faccia.L, 2, 2],
+    [indice_faccia.F, 0, 2],
+  ],
+  [
+    "DRF",
+    [indice_faccia.D, 2, 0],
+    [indice_faccia.R, 2, 2],
+    [indice_faccia.F, 2, 2],
+  ],
+  [
+    "DRB",
+    [indice_faccia.D, 2, 2],
+    [indice_faccia.R, 2, 2],
+    [indice_faccia.B, 0, 2],
+  ],
+  [
+    "DLB",
+    [indice_faccia.D, 0, 2],
+    [indice_faccia.L, 0, 2],
+    [indice_faccia.B, 2, 2],
+  ],
+];
+
+console.log("Mappa degli angoli:");
+for (let i = 0; i < angoli.length; i++) {
+  console.log(
+    "Angolo",
+    angoli[i][0],
+    "Composto da facce di colore: ",
+    colore_by_indice[angoli[i][1][0]],
+    " , ",
+    colore_by_indice[angoli[i][2][0]],
+    " e ",
+    colore_by_indice[angoli[i][3][0]],
+    "e avente il ",
+    colore_by_indice[angoli[i][1][0]],
+    "coordinate: ",
+    angoli[i][1][1] + 3 * angoli[i][1][0],
+    "/",
+    angoli[i][1][2],
+    ", il ",
+    colore_by_indice[angoli[i][2][0]],
+    "coordinate: ",
+    angoli[i][2][1] + 3 * angoli[i][2][0],
+    "/",
+    angoli[i][2][2],
+    " e il ",
+    colore_by_indice[angoli[i][3][0]],
+    "coordinate: ",
+    angoli[i][3][1] + 3 * angoli[i][3][0],
+    "/",
+    angoli[i][3][2]
+  );
+}
+
+// Funzione di gestione click dei bottoni con switch
+function esegui_click(event) {
+  let id = event.target.id;
+
+  switch (id) {
+    case "F":
+      ruotaFaccia("F");
+      break;
+
+    case "U":
+      ruotaFaccia("U");
+      break;
+
+    case "R":
+      ruotaFaccia("R");
+      break;
+
+    case "L":
+      ruotaFaccia("L");
+      break;
+
+    case "B":
+      ruotaFaccia("B");
+      break;
+
+    case "D":
+      ruotaFaccia("D");
+      break;
+    case "genera":
+      console.log("Generazione casuale");
+      generaMosseCasuali();
+      break;
+
+    case "mosse":
+      console.log("Mostra le mosse");
+      aggiornaLogMosse();
+      break;
+
+    case "risolvi":
+      console.log("Risoluzione del cubo");
+      risoluzione();
+      break;
+
+    default:
+      console.log("Bottone non gestito:", id);
+      break;
+  }
+}
+
+//funzione per gestire la rotazione in senso orario delle facce al click
+
+//funzione per gestire lo scambio del colore dei quadratini
+
+function scambio_pixel(elem1, elem2, elem3, elem4) {
+  const classe1 = elem1.classList[1];
+  const classe2 = elem2.classList[1];
+  const classe3 = elem3.classList[1];
+  const classe4 = elem4.classList[1];
+
+  // Scambio circolare delle classi
+  elem1.classList.remove(classe1);
+  elem1.classList.add(classe2);
+
+  elem2.classList.remove(classe2);
+  elem2.classList.add(classe3);
+
+  elem3.classList.remove(classe3);
+  elem3.classList.add(classe4);
+
+  elem4.classList.remove(classe4);
+  elem4.classList.add(classe1);
+}
+
+//funzione per gestire il bottone Genera
+
+function generaMosseCasuali() {
+  var numeroCasuale = Math.floor(Math.random() * (50 - 35 + 1)) + 35;
+  console.log("Numero di iterazioni: ", numeroCasuale);
+
+  var i = 0;
+
+  function eseguiPasso() {
+    if (i >= numeroCasuale) {
+      return; // Fine del ciclo
+    }
+
+    // Genera un numero da 3 a 8
+    var indice = Math.floor(Math.random() * (8 - 3 + 1)) + 3;
+
+    var id = buttons[indice].id;
+    console.log(id);
+    ruotaFaccia(id);
+    i++;
+    setTimeout(eseguiPasso, 50); // Chiama se stesso dopo 50ms
+  }
+
+  // Avvia il primo passo
+  eseguiPasso();
+}
+
+//funzione per gestire la risoluzione del cubo (partiamo dalla faccia bianca, eventualmente ampliamo a tutte le facce)
+
+function risoluzione() {
+  console.log("magari fosse così facile :DDDD");
+}
+
+//funzione per creare la croce iniziale
+//funzione per posizionare gli spigoli della croce
+
+//prima di tutto, controllare se lo spigolo è già al suo posto
+//se non sono al loro posto, portarli in basso
+//portare lo spigolo sotto il centro del colore corrispondente
+//portare lo spigolo in alto
+//ripetere per tutti gli spigoli
+
+//funzione per finire il primo strato
+
+//funzione per finire il secondo strato
+
+//funzione per creare la croce nel terzo strato
+
+//funzione per creare finire la sesta faccia
+
+//funzione per sistemare gli spigoli del terzo strato
+
+//funzione per sistemare gli angoli del terzo strato

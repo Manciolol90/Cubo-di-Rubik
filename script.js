@@ -1,214 +1,260 @@
+console.log(
+  "questo metodo segue la logica della soluzione a strati. è molto lontano dall'essere ottimizzato, ma è un inizio. Si parte dalla faccia bianca, eventualmente si può ampliare a tutte le facce."
+);
 // Seleziona tutti i bottoni
-var buttons = document.querySelectorAll("button");
-var colonne = document.querySelectorAll(".colonna");
-const rotazioni = {
-    F: {
-        adiacenti: [
-            [5,2], [2,0], [12,0], [9,2],
-            [4,2], [2,1], [13,0], [9,1],
-            [3,2], [2,2], [14,0], [9,0]
-        ],
-        faccia: [
-            [7,0], [6,1], [7,2], [8,1],
-            [8,0], [6,0], [6,2], [8,2]
-        ]
-    },
-    U: {
-        adiacenti: [
-            [15,0], [0,0], [6,0], [9,0],
-            [16,0], [1,0], [7,0], [10,0],
-            [17,0], [2,0], [8,0], [11,0]
-        ],
-        faccia: [
-            [4,0], [3,1], [4,2], [5,1],
-            [5,0], [3,0], [3,2], [5,2]
-        ]
-    },
-    R: {
-        adiacenti: [
-            [5,0], [8,0], [14,0], [15,2],
-            [5,1], [8,1], [14,1], [15,1],
-            [5,2], [8,2], [14,2], [15,0]
-        ],
-        faccia: [
-            [10,0], [9,1], [10,2], [11,1],
-            [11,0], [9,0], [9,2], [11,2]
-        ]
-    },
-    L: {
-        adiacenti: [
-            [3,2], [17,0], [12,2], [6,2],
-            [3,1], [17,1], [12,1], [6,1],
-            [3,0], [17,2], [12,0], [6,0]
-        ],
-        faccia: [
-            [1,0], [0,1], [1,2], [2,1],
-            [2,0], [0,0], [0,2], [2,2]
-        ]
-    },
-    B: {
-        adiacenti: [
-            [3,0], [11,0], [14,2], [0,2],
-            [4,0], [11,1], [13,2], [0,1],
-            [5,0], [11,2], [12,2], [0,0]
-        ],
-        faccia: [
-            [16,0], [15,1], [16,2], [17,1],
-            [17,0], [15,0], [15,2], [17,2]
-        ]
-    },
-    Bt: {
-        adiacenti: [
-            [8,2], [2,2], [17,2], [11,2],
-            [7,2], [1,2], [16,2], [10,2],
-            [6,2], [0,2], [15,2], [9,2]
-        ],
-        faccia: [
-            [13,0], [12,1], [13,2], [14,1],
-            [14,0], [12,0], [12,2], [14,2]
-        ]
-    }
+let buttons = document.querySelectorAll("button");
+let colonne = document.querySelectorAll(".colonna");
+for (let i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener("click", esegui_click);
+}
+
+/*----- MAPPATURA -----*/
+
+const indice_faccia = { L: 0, U: 1, F: 2, R: 3, D: 4, B: 5 };
+const faccia_by_indice = { 0: "L", 1: "U", 2: "F", 3: "R", 4: "D", 5: "B" };
+const colore_by_indice = {
+  0: "blu",
+  1: "bianco",
+  2: "arancione",
+  3: "verde",
+  4: "giallo",
+  5: "rosso",
 };
 
-for (var i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener("click", esegui_click);
-}
+// === Spigoli ===
+const spigoli = [
+  ["UF", [indice_faccia.U, 1, 2], [indice_faccia.F, 1, 0]],
+  ["UR", [indice_faccia.U, 2, 1], [indice_faccia.R, 1, 0]],
+  ["UB", [indice_faccia.U, 1, 0], [indice_faccia.B, 1, 0]],
+  ["UL", [indice_faccia.U, 0, 1], [indice_faccia.L, 1, 0]],
 
-// Funzione di gestione click dei bottoni con switch
-function esegui_click(event) {
-    var id = event.target.id;
+  ["DF", [indice_faccia.D, 1, 0], [indice_faccia.F, 1, 2]],
+  ["DR", [indice_faccia.D, 2, 1], [indice_faccia.R, 1, 2]],
+  ["DB", [indice_faccia.D, 1, 2], [indice_faccia.B, 1, 2]],
+  ["DL", [indice_faccia.D, 0, 1], [indice_faccia.L, 1, 2]],
 
-    switch (id) {
-        case "F":
-            ruotaFaccia("F");
-            break;
+  ["FL", [indice_faccia.F, 0, 1], [indice_faccia.L, 2, 1]],
+  ["FR", [indice_faccia.F, 2, 1], [indice_faccia.R, 0, 1]],
+  ["BR", [indice_faccia.B, 0, 1], [indice_faccia.R, 2, 1]],
+  ["BL", [indice_faccia.B, 2, 1], [indice_faccia.L, 0, 1]],
+];
 
-        case "U":
-            ruotaFaccia("U");
-            break;
+// === Angoli ===
+const angoli = [
+  [
+    "ULF",
+    [indice_faccia.U, 0, 2],
+    [indice_faccia.L, 2, 0],
+    [indice_faccia.F, 0, 0],
+  ],
+  [
+    "URF",
+    [indice_faccia.U, 2, 2],
+    [indice_faccia.R, 0, 0],
+    [indice_faccia.F, 2, 0],
+  ],
+  [
+    "URB",
+    [indice_faccia.U, 2, 0],
+    [indice_faccia.R, 2, 0],
+    [indice_faccia.B, 0, 0],
+  ],
+  [
+    "ULB",
+    [indice_faccia.U, 0, 0],
+    [indice_faccia.L, 0, 0],
+    [indice_faccia.B, 2, 0],
+  ],
 
-        case "R":
-            ruotaFaccia("R");
-            break;
+  [
+    "DLF",
+    [indice_faccia.D, 0, 0],
+    [indice_faccia.L, 2, 2],
+    [indice_faccia.F, 0, 2],
+  ],
+  [
+    "DRF",
+    [indice_faccia.D, 2, 0],
+    [indice_faccia.R, 2, 2],
+    [indice_faccia.F, 2, 2],
+  ],
+  [
+    "DRB",
+    [indice_faccia.D, 2, 2],
+    [indice_faccia.R, 2, 2],
+    [indice_faccia.B, 0, 2],
+  ],
+  [
+    "DLB",
+    [indice_faccia.D, 0, 2],
+    [indice_faccia.L, 0, 2],
+    [indice_faccia.B, 2, 2],
+  ],
+];
 
-        case "L":
-            ruotaFaccia("L");
-            break;
+const rotationOrder = {
+  U: ["B", "L", "F", "R"],
+  F: ["U", "L", "D", "R"],
+  R: ["U", "F", "D", "B"],
+  B: ["U", "R", "D", "L"],
+  L: ["U", "B", "D", "F"],
+  D: ["F", "L", "B", "R"],
+};
 
-        case "B":
-            ruotaFaccia("B");
-            break;
+const rotationOrderCorner = {
+  U: ["ULF", "URF", "URB", "ULB"],
+  D: ["DLF", "DRF", "DRB", "DLB"],
+  F: ["ULF", "URF", "DRF", "DLF"],
+  B: ["URB", "ULB", "DLB", "DRB"],
+  L: ["ULB", "ULF", "DLF", "DLB"],
+  R: ["URF", "URB", "DRB", "DRF"],
+};
 
-        case "Bt":
-            ruotaFaccia("Bt");
-            break;
-        case "genera":
-            console.log("Generazione casuale");
-            generaMosseCasuali();
-            break;
-
-        case "mosse":
-            console.log("Mostra le mosse");
-            aggiornaLogMosse();
-            break;
-
-        case "risolvi":
-            console.log("Risoluzione del cubo");
-            risoluzione();
-            break;
-
-        default:
-            console.log("Bottone non gestito:", id);
-            break;
-    }
-}
-
-//funzione per gestire la rotazione in senso orario delle facce al click
+/*===Funzione ruota faccia=== */
 
 function ruotaFaccia(id) {
-    const config = rotazioni[id];
-    if (!config) return;
+  console.log("Rotazione completa faccia:", id);
 
-    // Rotazione delle facce adiacenti (3 cicli da 4)
-    for (let i = 0; i < config.adiacenti.length; i += 4) {
-        const [a, b, c, d] = config.adiacenti.slice(i, i + 4)
-            .map(([col, child]) => colonne[col].children[child]);
-        scambio_pixel(a, b, c, d);
-    }
+  // --- 1. Gestione SPIGOLI ---
+  const risultato_spigoli = spigoli
+    .filter((s) => s[0].includes(id))
+    .map(([name, posA, posB]) => {
+      const [a, b] = name.split("");
+      if (a === id) {
+        return { facce_coinvolte: [a, b], posizioni: [posA, posB] };
+      } else {
+        return { facce_coinvolte: [b, a], posizioni: [posB, posA] };
+      }
+    });
 
-    // Rotazione interna della faccia
-    for (let i = 0; i < config.faccia.length; i += 4) {
-        const [a, b, c, d] = config.faccia.slice(i, i + 4)
-            .map(([col, child]) => colonne[col].children[child]);
-        scambio_pixel(a, b, c, d);
-    }
+  const spigoli_ordinati = rotationOrder[id].map((adj) =>
+    risultato_spigoli.find((s) => s.facce_coinvolte[1] === adj)
+  );
+
+  // Rotazione pixel della faccia ruotata (spigoli)
+  const spigoliFacePixels = spigoli_ordinati.map((s) =>
+    getPixel(getIndiceByLettera(id), s.posizioni[0][1], s.posizioni[0][2])
+  );
+  scambio_pixel(
+    spigoliFacePixels[0],
+    spigoliFacePixels[1],
+    spigoliFacePixels[2],
+    spigoliFacePixels[3]
+  );
+
+  // Rotazione pixel delle facce adiacenti (spigoli)
+  const spigoliAdjPixels = spigoli_ordinati.map((s, i) =>
+    getPixel(
+      getIndiceByLettera(rotationOrder[id][i]),
+      s.posizioni[1][1],
+      s.posizioni[1][2]
+    )
+  );
+  scambio_pixel(
+    spigoliAdjPixels[0],
+    spigoliAdjPixels[1],
+    spigoliAdjPixels[2],
+    spigoliAdjPixels[3]
+  );
 }
 
-//funzione per gestire lo scambio del colore dei quadratini
-
-function scambio_pixel(elem1, elem2, elem3, elem4) {
-    const classe1 = elem1.classList[1];
-    const classe2 = elem2.classList[1];
-    const classe3 = elem3.classList[1];
-    const classe4 = elem4.classList[1];
-
-    // Scambio circolare delle classi
-    elem1.classList.remove(classe1);
-    elem1.classList.add(classe2);
-
-    elem2.classList.remove(classe2);
-    elem2.classList.add(classe3);
-
-    elem3.classList.remove(classe3);
-    elem3.classList.add(classe4);
-
-    elem4.classList.remove(classe4);
-    elem4.classList.add(classe1);
+function getPixel(facciaIndice, colonna, riga) {
+  const facce = document.querySelectorAll(".faccia"); // le facce del cubo
+  const faccia = facce[facciaIndice]; // la faccia corretta. faccia indice va da 0 a 5 e lo prendo dall'oggetto indice_faccia
+  const col = faccia.children[colonna]; // colonna
+  const pixel = col.children[riga]; // pixel dentro la colonna
+  return pixel;
 }
 
-//funzione per gestire il bottone Genera
+function scambio_pixel(e1, e2, e3, e4) {
+  var c1 = e1.classList[1];
+  var c2 = e2.classList[1];
+  var c3 = e3.classList[1];
+  var c4 = e4.classList[1];
+
+  // rotazione in senso orario
+  e1.classList.remove(c1);
+  e1.classList.add(c2);
+
+  e2.classList.remove(c2);
+  e2.classList.add(c3);
+
+  e3.classList.remove(c3);
+  e3.classList.add(c4);
+
+  e4.classList.remove(c4);
+  e4.classList.add(c1);
+}
+
+function getIndiceByLettera(lettera) {
+  switch (lettera) {
+    case "L":
+      return 0;
+    case "U":
+      return 1;
+    case "F":
+      return 2;
+    case "R":
+      return 3;
+    case "D":
+      return 4;
+    case "B":
+      return 5;
+    default:
+      return null; // se non trova la lettera
+  }
+}
+// Scambia le classi colore di 4 pixel in senso orario
+
+/*----- BOTTONI -----*/
+
+function esegui_click(event) {
+  let id = event.target.id;
+  switch (id) {
+    case "F":
+    case "U":
+    case "R":
+    case "L":
+    case "B":
+    case "D":
+      ruotaFaccia(id);
+      break;
+    case "genera":
+      generaMosseCasuali();
+      break;
+    case "mosse":
+      aggiornaLogMosse();
+      break;
+    case "risolvi":
+      risoluzione();
+      break;
+    default:
+      console.log("Bottone non gestito:", id);
+      break;
+  }
+}
+
+/*----- GENERA MOSSE CASUALI -----*/
 
 function generaMosseCasuali() {
-    var numeroCasuale = Math.floor(Math.random() * (50 - 35 + 1)) + 35;
-    console.log("Numero di iterazioni: ", numeroCasuale);
+  let numeroCasuale = Math.floor(Math.random() * (50 - 35 + 1)) + 35;
+  console.log("Scramble:", numeroCasuale, "mosse");
 
-    var i = 0;
-
-    function eseguiPasso() {
-        if (i >= numeroCasuale) {
-            return; // Fine del ciclo
-        }
-
-        // Genera un numero da 3 a 8
-        var indice = Math.floor(Math.random() * (8 - 3 + 1)) + 3;
-
-        var id = buttons[indice].id;
-        console.log(id);
-        ruotaFaccia(id);
-        i++;
-        setTimeout(eseguiPasso, 50); // Chiama se stesso dopo 50ms
-    }
-
-    // Avvia il primo passo
-    eseguiPasso();
+  let i = 0;
+  function eseguiPasso() {
+    if (i >= numeroCasuale) return;
+    let indice = Math.floor(Math.random() * (8 - 3 + 1)) + 3;
+    let id = buttons[indice].id;
+    ruotaFaccia(id);
+    i++;
+    setTimeout(eseguiPasso, 50);
+  }
+  eseguiPasso();
 }
 
-//funzione per gestire la risoluzione del cubo (partiamo dalla faccia bianca, eventualmente ampliamo a tutte le facce)
+/*----- RISOLUZIONE -----*/
 
-function risoluzione (){
-    console.log("magari fosse così facile :DDDD")
+function risoluzione() {
+  console.log("Qui inizieremo la risoluzione...");
+  // TODO: inserire funzioni per croce bianca, primo strato, ecc.
 }
-
-//funzione per creare la croce iniziale
-
-//funzione per finire il primo strato
-
-//funzione per finire il secondo strato
-
-//funzione per creare la croce nel terzo strato
-
-//funzione per creare finire la sesta faccia
-
-//funzione per sistemare gli spigoli del terzo strato
-
-//funzione per sistemare gli angoli del terzo strato
